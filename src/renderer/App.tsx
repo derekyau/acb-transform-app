@@ -106,10 +106,7 @@ export function App() {
     <main className="app-shell">
       <section className="panel" aria-labelledby="app-title">
         <div className="header">
-          <div>
-            <p className="eyebrow">Desktop CSV utility</p>
-            <h1 id="app-title">ACB Transform</h1>
-          </div>
+          <h1 id="app-title">ACB Transform</h1>
         </div>
 
         <div className="form-grid">
