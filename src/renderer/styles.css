@@ -465,10 +465,11 @@ h4 {
 }
 
 .platform-tabs {
-  display: inline-grid;
-  grid-template-columns: repeat(2, minmax(0, auto));
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 4px;
-  justify-self: start;
+  justify-self: stretch;
+  width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.14);
   border-radius: 7px;
   background: #ededed;
@@ -480,6 +481,7 @@ h4 {
   align-items: center;
   justify-content: center;
   gap: 7px;
+  min-width: 0;
   min-height: 30px;
   border: 0;
   border-radius: 5px;
@@ -487,6 +489,7 @@ h4 {
   color: #45454b;
   background: transparent;
   box-shadow: none;
+  white-space: nowrap;
 }
 
 .platform-tab:hover {
@@ -584,8 +587,13 @@ h4 {
   }
 
   .platform-tabs {
-    grid-template-columns: 1fr;
-    justify-self: stretch;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .platform-tab {
+    gap: 5px;
+    padding: 0 8px;
+    font-size: 0.82rem;
   }
 
   .screen-intro {

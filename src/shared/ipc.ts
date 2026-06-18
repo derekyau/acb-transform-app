@@ -1,4 +1,4 @@
-export const transformerTypes = ['IBKR', 'QT'] as const;
+export const transformerTypes = ['IBKR', 'QT', 'WEALTHSIMPLE'] as const;
 
 export type TransformerType = (typeof transformerTypes)[number];
 

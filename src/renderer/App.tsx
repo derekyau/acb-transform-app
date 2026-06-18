@@ -4,7 +4,8 @@ import acbSpreadsheetConfigurationUrl from './assets/acb-settings/spreadsheet-co
 import appLogoUrl from './assets/app/acb-transform-logo.png';
 import ibkrFlexQuerySettingsUrl from './assets/broker-instructions/ibkr-flex-query-settings.jpg';
 import ibkrIconUrl from './assets/brokers/ibkr-favicon.png';
-import questradeIconUrl from './assets/brokers/questrade-favicon.ico';
+import questradeIconUrl from './assets/brokers/questrade-logo.svg';
+import wealthsimpleIconUrl from './assets/brokers/wealthsimple-favicon.svg';
 import buyMeACoffeeBadgeUrl from './assets/support/buy-me-a-coffee.png';
 import { transformerTypes, type TransformerType } from '../shared/ipc';
 
@@ -114,7 +115,21 @@ const exportInstructions: Record<
       'Set the date range to the tax year or custom range you need.',
       'In the activity filters, choose Deselect All, then select only Trades.',
       'Download or export the results as a CSV, XLS, or XLSX file.',
-      'Use the downloaded file as the input file with the QT transformer.',
+      'Use the downloaded file as the input file with the Questrade transformer.',
+    ],
+  },
+  WEALTHSIMPLE: {
+    iconUrl: wealthsimpleIconUrl,
+    title: 'Wealthsimple',
+    summary: 'Export all trades and account activity as a CSV from the Activity tab.',
+    steps: [
+      'Log in to Wealthsimple on the web using a desktop browser.',
+      'Click the Activity tab.',
+      'Click Download activities.',
+      'Choose your date range.',
+      'Select the account or accounts you want to export.',
+      'Click Download CSV.',
+      'Use the downloaded file as the input file with the Wealthsimple transformer.',
     ],
   },
 };
@@ -350,7 +365,7 @@ export function App() {
                             className="broker-icon"
                             aria-hidden="true"
                           />
-                          <span>{transformerType}</span>
+                          <span>{exportInstructions[transformerType].title}</span>
                         </>
                       ) : (
                         <span className="transformer-placeholder">Select a transformer</span>
@@ -384,7 +399,7 @@ export function App() {
                               className="broker-icon"
                               aria-hidden="true"
                             />
-                            <span>{type}</span>
+                            <span>{exportInstructions[type].title}</span>
                           </button>
                         ))}
                       </div>
