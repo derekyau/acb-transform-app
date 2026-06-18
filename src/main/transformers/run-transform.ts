@@ -13,6 +13,12 @@ const transformerLoaders: Record<TransformerType, () => Transformer> = {
   QT: () => loadTransformer('./acb-qt-transform.js') as Transformer,
 };
 
+const supportedInputExtensions = new Set(['.csv', '.xls', '.xlsx']);
+
+function isSupportedInputPath(filePath: string) {
+  return supportedInputExtensions.has(path.extname(filePath).toLowerCase());
+}
+
 function isCsvPath(filePath: string) {
   return path.extname(filePath).toLowerCase() === '.csv';
 }
@@ -23,11 +29,11 @@ function normalizeForComparison(filePath: string) {
 
 function validateRequest(request: TransformRequest): string | null {
   if (!request.inputPath) {
-    return 'Select an input CSV file before transforming.';
+    return 'Select an input file before transforming.';
   }
 
-  if (!isCsvPath(request.inputPath)) {
-    return 'The input file must be a .csv file.';
+  if (!isSupportedInputPath(request.inputPath)) {
+    return 'The input file must be a .csv, .xls, or .xlsx file.';
   }
 
   if (!request.transformerType) {
@@ -40,6 +46,10 @@ function validateRequest(request: TransformRequest): string | null {
 
   if (!request.outputPath) {
     return 'Choose an output file location before transforming.';
+  }
+
+  if (!isCsvPath(request.outputPath)) {
+    return 'The output file must be a .csv file.';
   }
 
   if (normalizeForComparison(request.inputPath) === normalizeForComparison(request.outputPath)) {

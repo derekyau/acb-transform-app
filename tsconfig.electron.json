@@ -16,5 +16,6 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["node", "electron"]
   },
-  "include": ["src/main/**/*.ts", "src/main/**/*.js", "src/shared/**/*.ts"]
+  "include": ["src/main/**/*.ts", "src/main/**/*.js", "src/shared/**/*.ts"],
+  "exclude": ["src/main/**/*.test.js"]
 }

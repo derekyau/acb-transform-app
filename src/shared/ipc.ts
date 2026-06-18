@@ -27,3 +27,14 @@ export type FilePickerResult =
       canceled: false;
       filePath: string;
     };
+
+export type FileActionResult =
+  | {
+      ok: true;
+    }
+  | {
+      ok: false;
+      error: string;
+    };
+
+export type WindowLayoutMode = 'compact' | 'help';
