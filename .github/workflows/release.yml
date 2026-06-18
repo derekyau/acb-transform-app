@@ -86,7 +86,7 @@ jobs:
         run: npm test
 
       - name: Build macOS DMG and ZIP
-        run: npm run dist:mac -- --universal
+        run: npm run dist:mac -- --universal --publish never
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
@@ -133,7 +133,7 @@ jobs:
         run: npm test
 
       - name: Build Windows installer
-        run: npm run dist:win
+        run: npm run dist:win -- --publish never
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
