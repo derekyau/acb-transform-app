@@ -36,8 +36,10 @@ The release workflow reads `package.json`, derives the release tag, and verifies
    - The default is `main`.
 7. Wait for both platform jobs to finish.
 8. Confirm the GitHub Release contains:
-   - macOS `.dmg`
-   - macOS `.zip`
+   - macOS Intel `.dmg`
+   - macOS Intel `.zip`
+   - macOS Apple Silicon `.dmg`
+   - macOS Apple Silicon `.zip`
    - Windows `.exe`
 9. Download and smoke-test the installers.
 10. Publish the draft release when ready.
@@ -47,7 +49,7 @@ The release workflow reads `package.json`, derives the release tag, and verifies
 Build macOS locally:
 
 ```bash
-npm run dist:mac -- --universal
+npm run dist:mac -- --x64 --arm64 --publish never
 ```
 
 The macOS artifacts are written to `release/`.
