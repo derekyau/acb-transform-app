@@ -66,11 +66,11 @@ The Windows installer is written to `release/`.
 
 ## Signing Status
 
-Current releases are unsigned.
+Current macOS releases use ad-hoc signing. This makes the app bundle internally consistent, but it does not identify the publisher to Apple and does not make the app trusted by Gatekeeper.
 
 Expected user warnings:
 
-- macOS may show Gatekeeper warnings for the DMG or app.
+- macOS may show Gatekeeper warnings for the DMG or app. Users may need to right-click the app and choose **Open**, or approve it in System Settings.
 - Windows may show Unknown Publisher or SmartScreen warnings for the installer.
 
 Add macOS notarization and Windows code signing later when release trust becomes important.
