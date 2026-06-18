@@ -44,6 +44,8 @@ The release workflow reads `package.json`, derives the release tag, and verifies
 9. Download and smoke-test the installers.
 10. Publish the draft release when ready.
 
+When rerun, the workflow deletes existing uploaded assets from the target GitHub Release before building and uploading new ones. GitHub's automatic source code archives are not uploaded assets and are not deleted by the workflow.
+
 ## Local Build Commands
 
 Build macOS locally:

@@ -51,6 +51,23 @@ jobs:
           RELEASE_TAG: ${{ steps.release-metadata.outputs.release_tag }}
         run: gh release view "$RELEASE_TAG"
 
+      - name: Delete existing release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release-metadata.outputs.release_tag }}
+        run: |
+          asset_names="$(gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name')"
+
+          if [ -z "$asset_names" ]; then
+            echo "No existing release assets to delete."
+            exit 0
+          fi
+
+          while IFS= read -r asset_name; do
+            echo "Deleting existing release asset: $asset_name"
+            gh release delete-asset "$RELEASE_TAG" "$asset_name" --yes
+          done <<< "$asset_names"
+
   build-macos:
     name: Build and upload macOS release assets
     needs: validate-release
