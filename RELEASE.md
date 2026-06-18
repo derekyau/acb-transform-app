@@ -6,14 +6,14 @@ This project releases desktop installers through the manual GitHub Actions workf
 
 `package.json` is the source of truth for the app version.
 
-The GitHub release tag must match `package.json` with a leading `v`.
+The GitHub release tag is derived from `package.json` with a leading `v`.
 
 Examples:
 
 - `package.json` version `0.1.0` uses release tag `v0.1.0`
 - `package.json` version `1.0.0` uses release tag `v1.0.0`
 
-The release workflow validates this before building. If the tag and package version do not match, the workflow fails before starting the macOS or Windows builds.
+The release workflow reads `package.json`, derives the release tag, and verifies that release exists before starting the macOS or Windows builds.
 
 ## Release Steps
 
@@ -31,9 +31,9 @@ The release workflow validates this before building. If the tag and package vers
    - The release can be a draft while assets are being built.
    - Create the tag from the same commit that contains the matching `package.json` version.
 5. In GitHub, open **Actions** and run **Release Desktop**.
-6. Enter:
-   - `release_tag`: the release tag, for example `v1.0.0`
-   - `source_ref`: leave blank to build the release tag, or enter a branch, tag, or SHA if needed
+6. Enter `Branch, Tag, or SHA`.
+   - Use the branch, tag, or commit SHA that contains the matching `package.json` version.
+   - The default is `main`.
 7. Wait for both platform jobs to finish.
 8. Confirm the GitHub Release contains:
    - macOS `.dmg`
