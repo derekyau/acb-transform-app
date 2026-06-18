@@ -1,7 +1,8 @@
 {
   "name": "acb-transform",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "ACB Transform desktop app for broker CSV files.",
+  "author": "Derek Yau (derek.yau@gmail.com)",
   "main": "dist/main/main.js",
   "private": true,
   "engines": {
