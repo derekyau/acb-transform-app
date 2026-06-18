@@ -1,0 +1,149 @@
+name: Release Desktop
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Existing GitHub Release tag to upload assets to, for example v1.0.0"
+        required: true
+        type: string
+      source_ref:
+        description: "Branch, tag, or SHA to build. Defaults to release_tag when blank."
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  validate-release:
+    name: Validate release tag and package version
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag }}
+      SOURCE_REF: ${{ inputs.source_ref || inputs.release_tag }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.SOURCE_REF }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Validate release tag matches package version
+        run: |
+          package_version="$(node -p "require('./package.json').version")"
+          tag_version="${RELEASE_TAG#v}"
+
+          if [ "$tag_version" != "$package_version" ]; then
+            echo "Release tag '$RELEASE_TAG' does not match package.json version '$package_version'."
+            echo "Expected release tag: v$package_version"
+            exit 1
+          fi
+
+      - name: Verify release exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release view "$RELEASE_TAG"
+
+  build-macos:
+    name: Build and upload macOS release assets
+    needs: validate-release
+    runs-on: macos-latest
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      RELEASE_TAG: ${{ inputs.release_tag }}
+      SOURCE_REF: ${{ inputs.source_ref || inputs.release_tag }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.SOURCE_REF }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build macOS DMG and ZIP
+        run: npm run dist:mac -- --universal
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-release-${{ inputs.release_tag }}
+          path: |
+            release/*.dmg
+            release/*.zip
+          if-no-files-found: error
+
+      - name: Upload assets to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$RELEASE_TAG" release/*.dmg release/*.zip --clobber
+
+  build-windows:
+    name: Build and upload Windows release assets
+    needs: validate-release
+    runs-on: windows-latest
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      RELEASE_TAG: ${{ inputs.release_tag }}
+      SOURCE_REF: ${{ inputs.source_ref || inputs.release_tag }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.SOURCE_REF }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build Windows installer
+        run: npm run dist:win
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-release-${{ inputs.release_tag }}
+          path: |
+            release/*.exe
+          if-no-files-found: error
+
+      - name: Upload assets to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$RELEASE_TAG" release/*.exe --clobber
