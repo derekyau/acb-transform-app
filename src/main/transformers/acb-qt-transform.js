@@ -20,7 +20,12 @@ const requiredHeaders = [
   'Gross Amount',
   'Commission',
   'Currency',
+  'Activity Type',
 ];
+
+function isTradeRow(row, headerMap) {
+  return String(getCell(row, headerMap, 'Activity Type')).trim().toUpperCase() === 'TRADES';
+}
 
 async function transform({ inputPath, outputPath }) {
   const rows = readRows(inputPath);
@@ -39,6 +44,7 @@ async function transform({ inputPath, outputPath }) {
 
   const transformedRows = dataRows
     .filter((row) => !isBlankRow(row))
+    .filter((row) => isTradeRow(row, headerMap))
     .map((row) => {
       const isForeignCurrency = foreignCurrencyFlag(getCell(row, headerMap, 'Currency'));
 
@@ -57,7 +63,7 @@ async function transform({ inputPath, outputPath }) {
     });
 
   if (transformedRows.length === 0) {
-    throw new Error('The input file does not contain any Questrade activity rows.');
+    throw new Error('The input file does not contain any Questrade trade rows.');
   }
 
   await fs.writeFile(outputPath, toCsv([outputHeaders, ...transformedRows]), 'utf8');

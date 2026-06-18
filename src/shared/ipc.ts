@@ -1,6 +1,12 @@
-export const transformerTypes = ['IBKR', 'QT', 'WEALTHSIMPLE'] as const;
+export const transformerTypes = ['IBKR', 'QT', 'WS'] as const;
 
 export type TransformerType = (typeof transformerTypes)[number];
+
+export const transformerLabels: Record<TransformerType, string> = {
+  IBKR: 'Interactive Brokers',
+  QT: 'Questrade',
+  WS: 'Wealthsimple',
+};
 
 export type TransformRequest = {
   inputPath: string;

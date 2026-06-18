@@ -7,7 +7,7 @@ import ibkrIconUrl from './assets/brokers/ibkr-favicon.png';
 import questradeIconUrl from './assets/brokers/questrade-logo.svg';
 import wealthsimpleIconUrl from './assets/brokers/wealthsimple-favicon.svg';
 import buyMeACoffeeBadgeUrl from './assets/support/buy-me-a-coffee.png';
-import { transformerTypes, type TransformerType } from '../shared/ipc';
+import { transformerLabels, transformerTypes, type TransformerType } from '../shared/ipc';
 
 type AppView = 'transform' | 'brokerInstructions' | 'adjustedCostBaseSettings';
 
@@ -89,7 +89,7 @@ const exportInstructions: Record<
 > = {
   IBKR: {
     iconUrl: ibkrIconUrl,
-    title: 'Interactive Brokers',
+    title: transformerLabels.IBKR,
     summary: 'Create a Flex Query export that includes only trades.',
     steps: [
       'Log in to Interactive Brokers Client Portal.',
@@ -97,7 +97,7 @@ const exportInstructions: Record<
       'Create a new Flex Query and name it something like ACB-trades-export.',
       'Under Sections, select Trades only.',
       'Use the settings shown below for the Flex Query output and general configuration.',
-      'Use the downloaded file as the input file with the IBKR transformer.',
+      `Use the downloaded file as the input file with the ${transformerLabels.IBKR} transformer.`,
     ],
     screenshot: {
       alt: 'Interactive Brokers Flex Query settings showing CSV format, no header and trailer records, column headers enabled, no single column header row, no section code and line descriptor, last business day period, dd/MM/yyyy date format, HHmmss time format, semicolon date time separator, default profit and loss, no offsetting trade cancel pairs, no currency rates, and no audit trail fields.',
@@ -107,7 +107,7 @@ const exportInstructions: Record<
   },
   QT: {
     iconUrl: questradeIconUrl,
-    title: 'Questrade',
+    title: transformerLabels.QT,
     summary: 'Export your account activity for the same date range you plan to transform.',
     steps: [
       'Sign in to Questrade and open the account you want to export.',
@@ -115,21 +115,21 @@ const exportInstructions: Record<
       'Set the date range to the tax year or custom range you need.',
       'In the activity filters, choose Deselect All, then select only Trades.',
       'Download or export the results as a CSV, XLS, or XLSX file.',
-      'Use the downloaded file as the input file with the Questrade transformer.',
+      `Use the downloaded file as the input file with the ${transformerLabels.QT} transformer.`,
     ],
   },
-  WEALTHSIMPLE: {
+  WS: {
     iconUrl: wealthsimpleIconUrl,
-    title: 'Wealthsimple',
+    title: transformerLabels.WS,
     summary: 'Export all trades and account activity as a CSV from the Activity tab.',
     steps: [
-      'Log in to Wealthsimple on the web using a desktop browser.',
+      `Log in to ${transformerLabels.WS} on the web using a desktop browser.`,
       'Click the Activity tab.',
       'Click Download activities.',
       'Choose your date range.',
       'Select the account or accounts you want to export.',
       'Click Download CSV.',
-      'Use the downloaded file as the input file with the Wealthsimple transformer.',
+      `Use the downloaded file as the input file with the ${transformerLabels.WS} transformer.`,
     ],
   },
 };
@@ -512,7 +512,7 @@ export function App() {
                         setActiveView('transform');
                       }}
                     >
-                      Use {activeInstructionType}
+                      Use {exportInstructions[activeInstructionType].title}
                     </button>
                   </div>
 

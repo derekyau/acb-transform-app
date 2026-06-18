@@ -11,7 +11,7 @@ const loadTransformer = createRequire(__filename);
 const transformerLoaders: Record<TransformerType, () => Transformer> = {
   IBKR: () => loadTransformer('./acb-ibkr-transform.js') as Transformer,
   QT: () => loadTransformer('./acb-qt-transform.js') as Transformer,
-  WEALTHSIMPLE: () => loadTransformer('./acb-wealthsimple-transform.js') as Transformer,
+  WS: () => loadTransformer('./acb-wealthsimple-transform.js') as Transformer,
 };
 
 const supportedInputExtensions = new Set(['.csv', '.xls', '.xlsx']);

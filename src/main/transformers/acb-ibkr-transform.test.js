@@ -161,6 +161,27 @@ describe('IBKR transformer', () => {
     ]);
   });
 
+  it('transforms only IBKR buy and sell rows', async () => {
+    const tempDir = await createTempDir();
+    const inputPath = path.join(tempDir, 'ibkr-export.csv');
+    const outputPath = path.join(tempDir, 'output.csv');
+    await writeCsvInput(inputPath, [
+      headers,
+      ['CASH', '03/05/2026', '', '1000', '', '', 'Cash deposit', 'CAD'],
+      sampleRows[0],
+      ['BOND', '04/05/2026', 'INTEREST', '12.34', '', '', 'Interest payment', 'CAD'],
+      ['AAPL', '05/05/2026', ' sell ', '1950', '-10', '-1', 'APPLE INC', 'USD'],
+    ]);
+
+    await transform({ inputPath, outputPath });
+
+    await expect(readOutputRows(outputPath)).resolves.toEqual([
+      outputHeaders,
+      ['DRAM', '27/05/2026', 'BUY', '-12088', '200', '-1.0006', 'ROUNDHILL MEMORY ETF', 'USD', 'Y', 'Y'],
+      ['AAPL', '05/05/2026', 'sell', '1950', '-10', '-1', 'APPLE INC', 'USD', 'Y', 'Y'],
+    ]);
+  });
+
   it('rejects files missing required IBKR headers', async () => {
     const tempDir = await createTempDir();
     const inputPath = path.join(tempDir, 'ibkr-export.csv');
@@ -169,6 +190,21 @@ describe('IBKR transformer', () => {
 
     await expect(transform({ inputPath, outputPath })).rejects.toThrow(
       'missing required IBKR columns: Proceeds',
+    );
+  });
+
+  it('rejects files with no IBKR trade rows', async () => {
+    const tempDir = await createTempDir();
+    const inputPath = path.join(tempDir, 'ibkr-export.csv');
+    const outputPath = path.join(tempDir, 'output.csv');
+    await writeCsvInput(inputPath, [
+      headers,
+      ['CASH', '03/05/2026', '', '1000', '', '', 'Cash deposit', 'CAD'],
+      ['BOND', '04/05/2026', 'INTEREST', '12.34', '', '', 'Interest payment', 'CAD'],
+    ]);
+
+    await expect(transform({ inputPath, outputPath })).rejects.toThrow(
+      'The input file does not contain any IBKR trade rows.',
     );
   });
 });

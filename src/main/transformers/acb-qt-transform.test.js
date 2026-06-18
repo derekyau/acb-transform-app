@@ -241,6 +241,66 @@ describe('QT transformer', () => {
     ]);
   });
 
+  it('transforms only Questrade trade rows', async () => {
+    const tempDir = await createTempDir();
+    const inputPath = path.join(tempDir, 'activities.csv');
+    const outputPath = path.join(tempDir, 'output.csv');
+    await writeCsvInput(inputPath, [
+      headers,
+      [
+        '2026-06-01 12:00:00 AM',
+        '2026-06-01 12:00:00 AM',
+        'Dividend',
+        'ZEB.TO',
+        'Dividend payment',
+        '',
+        '',
+        '12.34',
+        '0.00',
+        '12.34',
+        'CAD',
+        '26482108',
+        'Dividends',
+        'Individual margin',
+      ],
+      sampleRows[0],
+      [
+        '2026-06-02 12:00:00 AM',
+        '2026-06-02 12:00:00 AM',
+        'Deposit',
+        '',
+        'Cash deposit',
+        '',
+        '',
+        '100.00',
+        '0.00',
+        '100.00',
+        'CAD',
+        '26482108',
+        'Deposits',
+        'Individual margin',
+      ],
+    ]);
+
+    await transform({ inputPath, outputPath });
+
+    await expect(readOutputRows(outputPath)).resolves.toEqual([
+      outputHeaders,
+      [
+        'ZEB.TO',
+        '09/06/2026',
+        'Sell',
+        '914.94',
+        '-13.00000',
+        '0.00',
+        'BMO EQUAL WEIGHT BANKS INDX ETF CAD UNITS WE ACTED AS AGENT',
+        'CAD',
+        'N',
+        'N',
+      ],
+    ]);
+  });
+
   it('rejects files missing required Questrade headers', async () => {
     const tempDir = await createTempDir();
     const inputPath = path.join(tempDir, 'activities.csv');
@@ -249,6 +309,46 @@ describe('QT transformer', () => {
 
     await expect(transform({ inputPath, outputPath })).rejects.toThrow(
       'missing required Questrade columns: Gross Amount',
+    );
+  });
+
+  it('rejects files missing the Questrade activity type header', async () => {
+    const tempDir = await createTempDir();
+    const inputPath = path.join(tempDir, 'activities.csv');
+    const outputPath = path.join(tempDir, 'output.csv');
+    await writeCsvInput(inputPath, [headers.filter((header) => header !== 'Activity Type'), []]);
+
+    await expect(transform({ inputPath, outputPath })).rejects.toThrow(
+      'missing required Questrade columns: Activity Type',
+    );
+  });
+
+  it('rejects files with no Questrade trade rows', async () => {
+    const tempDir = await createTempDir();
+    const inputPath = path.join(tempDir, 'activities.csv');
+    const outputPath = path.join(tempDir, 'output.csv');
+    await writeCsvInput(inputPath, [
+      headers,
+      [
+        '2026-06-01 12:00:00 AM',
+        '2026-06-01 12:00:00 AM',
+        'Dividend',
+        'ZEB.TO',
+        'Dividend payment',
+        '',
+        '',
+        '12.34',
+        '0.00',
+        '12.34',
+        'CAD',
+        '26482108',
+        'Dividends',
+        'Individual margin',
+      ],
+    ]);
+
+    await expect(transform({ inputPath, outputPath })).rejects.toThrow(
+      'The input file does not contain any Questrade trade rows.',
     );
   });
 });

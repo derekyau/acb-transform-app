@@ -22,6 +22,10 @@ const requiredHeaders = [
   'CurrencyPrimary',
 ];
 
+function isTradeRow(row, headerMap) {
+  return ['BUY', 'SELL'].includes(String(getCell(row, headerMap, 'Buy/Sell')).trim().toUpperCase());
+}
+
 async function transform({ inputPath, outputPath }) {
   const rows = readRows(inputPath);
   const [headers, ...dataRows] = rows;
@@ -39,6 +43,7 @@ async function transform({ inputPath, outputPath }) {
 
   const transformedRows = dataRows
     .filter((row) => !isBlankRow(row))
+    .filter((row) => isTradeRow(row, headerMap))
     .map((row) => {
       const isForeignCurrency = foreignCurrencyFlag(getCell(row, headerMap, 'CurrencyPrimary'));
 
@@ -57,7 +62,7 @@ async function transform({ inputPath, outputPath }) {
     });
 
   if (transformedRows.length === 0) {
-    throw new Error('The input file does not contain any IBKR activity rows.');
+    throw new Error('The input file does not contain any IBKR trade rows.');
   }
 
   await fs.writeFile(outputPath, toCsv([outputHeaders, ...transformedRows]), 'utf8');

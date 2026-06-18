@@ -1,6 +1,6 @@
 # ACB Transform
 
-ACB Transform is an Electron desktop app for transforming broker CSV files into an ACB-oriented output file. This first pass is a working skeleton: the IBKR and QT transformers copy the selected CSV unchanged to the selected output path.
+ACB Transform is an Electron desktop app for transforming broker CSV files into an ACB-oriented output file.
 
 ## Requirements
 
